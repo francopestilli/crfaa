@@ -1,0 +1,74 @@
+function runAllanalyses_r_R1(subtractionType)
+% function runAllanalyses_r_R1(subtractionType)
+%
+% this function runs all the analyses to do do subtractiona nd fitTimecourse.m
+% it is now set up to run the stream at riken. 
+%
+% version R1 is the one used to reply to the reviewers in Nn
+% after the first submission
+%
+% subtractionType determines which type of 0-response to subtract.
+% 1 = original 0-contrast focal non-target response
+% 2 = reviewers' suggested 0-contrast response subtracted by trial type 
+%     (e.g., non-target focal from target focal, and non-target distributed 
+%      from target distributed)
+%
+% franco pestilli 2010.04.04
+
+SESSIONS = { ...
+ '/data1/crfaa/crfaa/FP_A0_testStream/fp20071019/'      ...
+%  '/data1/crfaa/crfaa/FP_A28_testStream/fp20080402/'   ...
+%  '/data1/crfaa/crfaa/FP_A100_testStream/fp20080415/'  ...
+ '/data1/crfaa/crfaa/JG_A0_testStream/jg20070919/'      ...
+%  '/data1/crfaa/crfaa/JG_A28_testStream/jg20080402/',  ...
+%  '/data1/crfaa/crfaa/JG_A100_testStream/jg20080414/', ...
+%  '/data1/crfaa/crfaa/FM_A28_testStream/fm20080406/',  ...
+ '/data1/crfaa/crfaa/FM_A0_testStream/fm20080209/'      ...
+ };
+
+% these are the rois used to estimate the STD of responses by combining
+% across visual areas (v1-v4):
+% roiType = {'combinedR206' 'combinedR207'};
+%'combinedR2025' 'combinedR205' 'combinedR2075' 'combinedR2085' 'combinedR2088'};
+
+% these are the original rois used to estimate the responses in each visual
+% area:
+% original rois: roiType = {'v1' 'v2' 'v3' 'v4'};
+% rois at different r2 to show reviewers:
+roiType = {'v1' 'v2' 'v3' 'v4' 'v1r025' 'v1r060' 'v2r025' 'v2r060' 'v3r025' 'v3r060' 'v4r025' 'v4r060'};
+
+for s = 1:length(SESSIONS) 
+ disp('%  START ')
+ disp('%  START ')
+ disp('##########################################################################################################################')
+ disp('##########################################################################################################################')
+ disp(sprintf('###################### %s #############################',SESSIONS{s}))
+ disp('##########################################################################################################################')
+ disp('##########################################################################################################################')
+ cd(SESSIONS{s})
+ for roi = 1:length(roiType)  
+  close all; drawnow, gs = getGS;
+   % chose which function to call to make the requested subtraction
+  switch subtractionType
+   case {1}
+    
+    [d d1 ts events] = meanERA_ROI_remove0_script3(gs(1),gs(2),1,filename,roiType{roi});
+   case {2}
+    [d d1 ts events] = meanERA_ROI_remove0_script3_R1(gs(1),gs(2),1,filename,roiType{roi});
+   otherwise
+    keyboard
+  end
+  
+  drawnow; 
+  clear d d1 ts events gs; 
+  clear global MLR;
+ end
+ disp('##########################################################################################################################')
+ disp('##########################################################################################################################')
+ disp(sprintf('###################### %s #############################',SESSIONS{s}))
+ disp('##########################################################################################################################')
+ disp('##########################################################################################################################')
+ disp('%  END ')
+ disp('%  END ')
+
+end
